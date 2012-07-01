@@ -7,7 +7,6 @@
 #include "MainPage.xaml.h"
 #include <ppltasks.h>
 #include <random>
-#include <windows.foundation.collections.h>
 
 using namespace DiskSpeedTest;
 
