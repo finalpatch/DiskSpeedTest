@@ -1,0 +1,193 @@
+﻿<Page
+    x:Class="DiskSpeedTest.MainPage"
+    IsTabStop="false"
+    x:Name="myPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DiskSpeedTest"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style x:Key="tblelem" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="tblhdr" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="Gray"/>
+        </Style>
+        <Style x:Key="rhdr" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+        <Style x:Key="rhdr0" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+    </Page.Resources>
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <Grid VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="72" Grid.Row="0">
+                Disk Speed Test
+            </TextBlock>
+            <StackPanel Orientation="Vertical"  Grid.Row="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <!--WRITE-->
+                    <StackPanel Orientation="Vertical" Grid.Column="0">
+                        <Grid Margin="10">
+                            <ProgressBar x:Name="wrbar" Height="60" Value="0" Minimum="0" Maximum="300"/>
+                            <TextBlock x:Name="wrlbl" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20">WRITE SPEED</TextBlock>
+                        </Grid>
+                    </StackPanel>
+                    <Button x:Name="startButton" HorizontalAlignment="Center" FontSize="26" Grid.Column="1" Click="startButton_Click_1">START</Button>
+                    <!--READ-->
+                    <StackPanel Orientation="Vertical" Grid.Column="2">
+                        <Grid Margin="10">
+                            <ProgressBar x:Name="rdbar" Height="60" Value="0" Minimum="0" Maximum="300"/>
+                            <TextBlock x:Name="rdlbl" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20">READ SPEED</TextBlock>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Vertical" Grid.Column="0">
+                    <TextBlock FontSize="30" HorizontalAlignment="Center">Will it Work?</TextBlock>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource tblelem}">10 Bit YUV 4:2:2</TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" Style="{StaticResource tblelem}">10 Bit RGB 4:4:4</TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="2" Style="{StaticResource tblelem}">12 Bit RGB 4:4:4</TextBlock>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource rhdr}" Foreground="Gray">Format</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource tblhdr}">Write</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Style="{StaticResource tblhdr}">Read</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="3" Style="{StaticResource tblhdr}">Write</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="4" Style="{StaticResource tblhdr}">Read</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="5" Style="{StaticResource tblhdr}">Write</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="6" Style="{StaticResource tblhdr}">Read</TextBlock>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource rhdr0}">PAL</TextBlock>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource rhdr0}">NTSC</TextBlock>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource rhdr0}">720p60</TextBlock>
+                        <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource rhdr0}">720p59.94</TextBlock>
+                        <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource rhdr0}">1080p23.98</TextBlock>
+                        <TextBlock Grid.Row="7" Grid.Column="0" Style="{StaticResource rhdr0}">1080p24</TextBlock>
+                        <TextBlock Grid.Row="8" Grid.Column="0" Style="{StaticResource rhdr0}">1080p29.97</TextBlock>
+                        <TextBlock Grid.Row="9" Grid.Column="0" Style="{StaticResource rhdr0}">1080p30</TextBlock>
+                        <TextBlock Grid.Row="10" Grid.Column="0" Style="{StaticResource rhdr0}">1080i50</TextBlock>
+                        <TextBlock Grid.Row="11" Grid.Column="0" Style="{StaticResource rhdr0}">1080i59.94</TextBlock>
+                        <TextBlock Grid.Row="12" Grid.Column="0" Style="{StaticResource rhdr0}">1080p50</TextBlock>
+                        <TextBlock Grid.Row="13" Grid.Column="0" Style="{StaticResource rhdr0}">1080p59.94</TextBlock>
+                        <TextBlock Grid.Row="14" Grid.Column="0" Style="{StaticResource rhdr0}">2K 1556@23.98</TextBlock>
+                        <TextBlock Grid.Row="15" Grid.Column="0" Style="{StaticResource rhdr0}">2K 1556@24</TextBlock>
+                        <TextBlock Grid.Row="16" Grid.Column="0" Style="{StaticResource rhdr0}">2K 1556@25</TextBlock>
+                    </Grid>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Column="1">
+                    <TextBlock FontSize="30" HorizontalAlignment="Center">How Fast?</TextBlock>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource rhdr}">10 Bit YUV 4:2:2</TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource tblhdr}">Write</TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Style="{StaticResource tblhdr}">Read</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource rhdr}">PAL</TextBlock>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource rhdr}">NTSC</TextBlock>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource rhdr}">HD 720</TextBlock>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource rhdr}">HD 1080</TextBlock>
+                        <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource rhdr}">2K</TextBlock>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource rhdr}">10 Bit YUV 4:2:2</TextBlock>
+                        <TextBlock Grid.Row="6" Grid.Column="1" Style="{StaticResource tblhdr}">Write</TextBlock>
+                        <TextBlock Grid.Row="6" Grid.Column="2" Style="{StaticResource tblhdr}">Read</TextBlock>
+                        <TextBlock Grid.Row="7" Grid.Column="0" Style="{StaticResource rhdr}">PAL</TextBlock>
+                        <TextBlock Grid.Row="8" Grid.Column="0" Style="{StaticResource rhdr}">NTSC</TextBlock>
+                        <TextBlock Grid.Row="9" Grid.Column="0" Style="{StaticResource rhdr}">HD 720</TextBlock>
+                        <TextBlock Grid.Row="10" Grid.Column="0" Style="{StaticResource rhdr}">HD 1080</TextBlock>
+                        <TextBlock Grid.Row="11" Grid.Column="0" Style="{StaticResource rhdr}">2K</TextBlock>
+
+                        <TextBlock Grid.Row="12" Grid.Column="0" Style="{StaticResource rhdr}">10 Bit YUV 4:2:2</TextBlock>
+                        <TextBlock Grid.Row="12" Grid.Column="1" Style="{StaticResource tblhdr}">Write</TextBlock>
+                        <TextBlock Grid.Row="12" Grid.Column="2" Style="{StaticResource tblhdr}">Read</TextBlock>
+                        <TextBlock Grid.Row="13" Grid.Column="0" Style="{StaticResource rhdr}">PAL</TextBlock>
+                        <TextBlock Grid.Row="14" Grid.Column="0" Style="{StaticResource rhdr}">NTSC</TextBlock>
+                        <TextBlock Grid.Row="15" Grid.Column="0" Style="{StaticResource rhdr}">HD 720</TextBlock>
+                        <TextBlock Grid.Row="16" Grid.Column="0" Style="{StaticResource rhdr}">HD 1080</TextBlock>
+                        <TextBlock Grid.Row="17" Grid.Column="0" Style="{StaticResource rhdr}">2K</TextBlock>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
