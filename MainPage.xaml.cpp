@@ -62,26 +62,239 @@ void MainPage::OnNavigatedTo(NavigationEventArgs^ e)
 	(void) e;	// Unused parameter
 }
 
-int computeSpeed(long long bytes, long long ms)
+long long v210framesize(int w, int h)
+{
+	return ((w + 23)/24*24)*h *16/6;
+}
+long long r210framesize(int w, int h)
+{
+	return w * h * 4;
+}
+long long r212framesize(int w, int h)
+{
+	return w * h * 2 * 3;
+}
+
+String^ format_fps(long long fps)
+{
+	wchar_t buf[20];
+	swprintf(buf, 20, L"%lld fps", fps);
+	return ref new String(buf);
+}
+
+const static long long v210_data_rates[15] = {
+	v210framesize(720, 576) * 25,
+	v210framesize(720, 486) * 30000 / 1001,
+	v210framesize(1280, 720) * 60,
+	v210framesize(1280, 720) * 60000 / 1001,
+	v210framesize(1920, 1080) * 24000 / 1001,
+	v210framesize(1920, 1080) * 24,
+	v210framesize(1920, 1080) * 30000 / 1001,
+	v210framesize(1920, 1080) * 30,
+	v210framesize(1920, 1080) * 25,
+	v210framesize(1920, 1080) * 30000 / 1001,
+	v210framesize(1920, 1080) * 50,
+	v210framesize(1920, 1080) * 60000 / 1001,
+	v210framesize(2048, 1556) * 24000 / 1001,
+	v210framesize(2048, 1556) * 24,
+	v210framesize(2048, 1556) * 25,
+};
+const static long long r210_data_rates[15] = {
+	r210framesize(720, 576) * 25,
+	r210framesize(720, 486) * 30000 / 1001,
+	r210framesize(1280, 720) * 60,
+	r210framesize(1280, 720) * 60000 / 1001,
+	r210framesize(1920, 1080) * 24000 / 1001,
+	r210framesize(1920, 1080) * 24,
+	r210framesize(1920, 1080) * 30000 / 1001,
+	r210framesize(1920, 1080) * 30,
+	r210framesize(1920, 1080) * 25,
+	r210framesize(1920, 1080) * 30000 / 1001,
+	r210framesize(1920, 1080) * 50,
+	r210framesize(1920, 1080) * 60000 / 1001,
+	r210framesize(2048, 1556) * 24000 / 1001,
+	r210framesize(2048, 1556) * 24,
+	r210framesize(2048, 1556) * 25,
+};
+const static long long r212_data_rates[15] = {
+	r212framesize(720, 576) * 25,
+	r212framesize(720, 486) * 30000 / 1001,
+	r212framesize(1280, 720) * 60,
+	r212framesize(1280, 720) * 60000 / 1001,
+	r212framesize(1920, 1080) * 24000 / 1001,
+	r212framesize(1920, 1080) * 24,
+	r212framesize(1920, 1080) * 30000 / 1001,
+	r212framesize(1920, 1080) * 30,
+	r212framesize(1920, 1080) * 25,
+	r212framesize(1920, 1080) * 30000 / 1001,
+	r212framesize(1920, 1080) * 50,
+	r212framesize(1920, 1080) * 60000 / 1001,
+	r212framesize(2048, 1556) * 24000 / 1001,
+	r212framesize(2048, 1556) * 24,
+	r212framesize(2048, 1556) * 25,
+};
+
+long long computeSpeed(long long bytes, long long ms)
 {
 	if(ms == 0)
 		return 0;
-	return static_cast<int>(bytes * 1000 / ms / (1024 * 1024));
+	return bytes * 1000 / ms;
 }
 
 void DiskSpeedTest::MainPage::updateResult()
 {
-	int writeSpeed = computeSpeed(m_totalWriteBytes, m_totalWriteTime);
-	int readSpeed = computeSpeed(m_totalReadBytes, m_totalReadTime);
+	long long writeSpeed = computeSpeed(m_totalWriteBytes, m_totalWriteTime);
+	long long readSpeed = computeSpeed(m_totalReadBytes, m_totalReadTime);
 
 	wchar_t buf[20];
-	swprintf(buf, 20, L"WRITE: %d Mb/s", writeSpeed);
-	this->wrlbl->Text = ref new String(buf);
-	this->wrbar->Value = writeSpeed;
 
-	swprintf(buf, 20, L"READ: %d Mb/s", readSpeed);
-	this->rdlbl->Text = ref new String(buf);
-	this->rdbar->Value = readSpeed;
+	if(writeSpeed > 0)
+	{
+		int mb = static_cast<int>(writeSpeed / (1024 * 1024));
+		swprintf(buf, 20, L"WRITE: %d Mb/s", mb);
+		this->wrlbl->Text = ref new String(buf);
+		this->wrbar->Value = mb;
+
+		v210_pal_wr_ok->Text = writeSpeed >= v210_data_rates[0] ? "Y" : "N";
+		v210_ntsc_wr_ok->Text = writeSpeed >= v210_data_rates[1] ? "Y" : "N";
+		v210_720p60_wr_ok->Text = writeSpeed >= v210_data_rates[2] ? "Y" : "N";
+		v210_720p59_wr_ok->Text = writeSpeed >= v210_data_rates[3] ? "Y" : "N";
+		v210_1080p23_wr_ok->Text = writeSpeed >= v210_data_rates[4] ? "Y" : "N";
+		v210_1080p24_wr_ok->Text = writeSpeed >= v210_data_rates[5] ? "Y" : "N";
+		v210_1080p29_wr_ok->Text = writeSpeed >= v210_data_rates[6] ? "Y" : "N";
+		v210_1080p30_wr_ok->Text = writeSpeed >= v210_data_rates[7] ? "Y" : "N";
+		v210_1080i50_wr_ok->Text = writeSpeed >= v210_data_rates[8] ? "Y" : "N";
+		v210_1080i59_wr_ok->Text = writeSpeed >= v210_data_rates[9] ? "Y" : "N";
+		v210_1080p50_wr_ok->Text = writeSpeed >= v210_data_rates[10] ? "Y" : "N";
+		v210_1080p59_wr_ok->Text = writeSpeed >= v210_data_rates[11] ? "Y" : "N";
+		v210_2k23_wr_ok->Text = writeSpeed >= v210_data_rates[12] ? "Y" : "N";
+		v210_2k24_wr_ok->Text = writeSpeed >= v210_data_rates[13] ? "Y" : "N";
+		v210_2k25_wr_ok->Text = writeSpeed >= v210_data_rates[14] ? "Y" : "N";
+
+		r210_pal_wr_ok->Text = writeSpeed >= r210_data_rates[0] ? "Y" : "N";
+		r210_ntsc_wr_ok->Text = writeSpeed >= r210_data_rates[1] ? "Y" : "N";
+		r210_720p60_wr_ok->Text = writeSpeed >= r210_data_rates[2] ? "Y" : "N";
+		r210_720p59_wr_ok->Text = writeSpeed >= r210_data_rates[3] ? "Y" : "N";
+		r210_1080p23_wr_ok->Text = writeSpeed >= r210_data_rates[4] ? "Y" : "N";
+		r210_1080p24_wr_ok->Text = writeSpeed >= r210_data_rates[5] ? "Y" : "N";
+		r210_1080p29_wr_ok->Text = writeSpeed >= r210_data_rates[6] ? "Y" : "N";
+		r210_1080p30_wr_ok->Text = writeSpeed >= r210_data_rates[7] ? "Y" : "N";
+		r210_1080i50_wr_ok->Text = writeSpeed >= r210_data_rates[8] ? "Y" : "N";
+		r210_1080i59_wr_ok->Text = writeSpeed >= r210_data_rates[9] ? "Y" : "N";
+		r210_1080p50_wr_ok->Text = writeSpeed >= r210_data_rates[10] ? "Y" : "N";
+		r210_1080p59_wr_ok->Text = writeSpeed >= r210_data_rates[11] ? "Y" : "N";
+		r210_2k23_wr_ok->Text = writeSpeed >= r210_data_rates[12] ? "Y" : "N";
+		r210_2k24_wr_ok->Text = writeSpeed >= r210_data_rates[13] ? "Y" : "N";
+		r210_2k25_wr_ok->Text = writeSpeed >= r210_data_rates[14] ? "Y" : "N";
+
+		r212_pal_wr_ok->Text = writeSpeed >= r212_data_rates[0] ? "Y" : "N";
+		r212_ntsc_wr_ok->Text = writeSpeed >= r212_data_rates[1] ? "Y" : "N";
+		r212_720p60_wr_ok->Text = writeSpeed >= r212_data_rates[2] ? "Y" : "N";
+		r212_720p59_wr_ok->Text = writeSpeed >= r212_data_rates[3] ? "Y" : "N";
+		r212_1080p23_wr_ok->Text = writeSpeed >= r212_data_rates[4] ? "Y" : "N";
+		r212_1080p24_wr_ok->Text = writeSpeed >= r212_data_rates[5] ? "Y" : "N";
+		r212_1080p29_wr_ok->Text = writeSpeed >= r212_data_rates[6] ? "Y" : "N";
+		r212_1080p30_wr_ok->Text = writeSpeed >= r212_data_rates[7] ? "Y" : "N";
+		r212_1080i50_wr_ok->Text = writeSpeed >= r212_data_rates[8] ? "Y" : "N";
+		r212_1080i59_wr_ok->Text = writeSpeed >= r212_data_rates[9] ? "Y" : "N";
+		r212_1080p50_wr_ok->Text = writeSpeed >= r212_data_rates[10] ? "Y" : "N";
+		r212_1080p59_wr_ok->Text = writeSpeed >= r212_data_rates[11] ? "Y" : "N";
+		r212_2k23_wr_ok->Text = writeSpeed >= r212_data_rates[12] ? "Y" : "N";
+		r212_2k24_wr_ok->Text = writeSpeed >= r212_data_rates[13] ? "Y" : "N";
+		r212_2k25_wr_ok->Text = writeSpeed >= r212_data_rates[14] ? "Y" : "N";
+
+		v210_pal_wr_fps->Text = format_fps(writeSpeed / v210framesize(720,576));
+		v210_ntsc_wr_fps->Text = format_fps(writeSpeed / v210framesize(720,486));
+		v210_720_wr_fps->Text = format_fps(writeSpeed / v210framesize(1280,720));
+		v210_1080_wr_fps->Text = format_fps(writeSpeed / v210framesize(1920,1080));
+		v210_2k_wr_fps->Text = format_fps(writeSpeed / v210framesize(2048,1556));
+
+		r210_pal_wr_fps->Text = format_fps(writeSpeed / r210framesize(720,576));
+		r210_ntsc_wr_fps->Text = format_fps(writeSpeed / r210framesize(720,486));
+		r210_720_wr_fps->Text = format_fps(writeSpeed / r210framesize(1280,720));
+		r210_1080_wr_fps->Text = format_fps(writeSpeed / r210framesize(1920,1080));
+		r210_2k_wr_fps->Text = format_fps(writeSpeed / r210framesize(2048,1556));
+
+		r212_pal_wr_fps->Text = format_fps(writeSpeed / r212framesize(720,576));
+		r212_ntsc_wr_fps->Text = format_fps(writeSpeed / r212framesize(720,486));
+		r212_720_wr_fps->Text = format_fps(writeSpeed / r212framesize(1280,720));
+		r212_1080_wr_fps->Text = format_fps(writeSpeed / r212framesize(1920,1080));
+		r212_2k_wr_fps->Text = format_fps(writeSpeed / r212framesize(2048,1556));
+	}
+
+	if(readSpeed > 0)
+	{
+		int mb = static_cast<int>(readSpeed / (1024 * 1024));
+		swprintf(buf, 20, L"READ: %d Mb/s", mb);
+		this->rdlbl->Text = ref new String(buf);
+		this->rdbar->Value = mb;
+
+		v210_pal_rd_ok->Text = readSpeed >= v210_data_rates[0] ? "Y" : "N";
+		v210_ntsc_rd_ok->Text = readSpeed >= v210_data_rates[1] ? "Y" : "N";
+		v210_720p60_rd_ok->Text = readSpeed >= v210_data_rates[2] ? "Y" : "N";
+		v210_720p59_rd_ok->Text = readSpeed >= v210_data_rates[3] ? "Y" : "N";
+		v210_1080p23_rd_ok->Text = readSpeed >= v210_data_rates[4] ? "Y" : "N";
+		v210_1080p24_rd_ok->Text = readSpeed >= v210_data_rates[5] ? "Y" : "N";
+		v210_1080p29_rd_ok->Text = readSpeed >= v210_data_rates[6] ? "Y" : "N";
+		v210_1080p30_rd_ok->Text = readSpeed >= v210_data_rates[7] ? "Y" : "N";
+		v210_1080i50_rd_ok->Text = readSpeed >= v210_data_rates[8] ? "Y" : "N";
+		v210_1080i59_rd_ok->Text = readSpeed >= v210_data_rates[9] ? "Y" : "N";
+		v210_1080p50_rd_ok->Text = readSpeed >= v210_data_rates[10] ? "Y" : "N";
+		v210_1080p59_rd_ok->Text = readSpeed >= v210_data_rates[11] ? "Y" : "N";
+		v210_2k23_rd_ok->Text = readSpeed >= v210_data_rates[12] ? "Y" : "N";
+		v210_2k24_rd_ok->Text = readSpeed >= v210_data_rates[13] ? "Y" : "N";
+		v210_2k25_rd_ok->Text = readSpeed >= v210_data_rates[14] ? "Y" : "N";
+
+		r210_pal_rd_ok->Text = readSpeed >= r210_data_rates[0] ? "Y" : "N";
+		r210_ntsc_rd_ok->Text = readSpeed >= r210_data_rates[1] ? "Y" : "N";
+		r210_720p60_rd_ok->Text = readSpeed >= r210_data_rates[2] ? "Y" : "N";
+		r210_720p59_rd_ok->Text = readSpeed >= r210_data_rates[3] ? "Y" : "N";
+		r210_1080p23_rd_ok->Text = readSpeed >= r210_data_rates[4] ? "Y" : "N";
+		r210_1080p24_rd_ok->Text = readSpeed >= r210_data_rates[5] ? "Y" : "N";
+		r210_1080p29_rd_ok->Text = readSpeed >= r210_data_rates[6] ? "Y" : "N";
+		r210_1080p30_rd_ok->Text = readSpeed >= r210_data_rates[7] ? "Y" : "N";
+		r210_1080i50_rd_ok->Text = readSpeed >= r210_data_rates[8] ? "Y" : "N";
+		r210_1080i59_rd_ok->Text = readSpeed >= r210_data_rates[9] ? "Y" : "N";
+		r210_1080p50_rd_ok->Text = readSpeed >= r210_data_rates[10] ? "Y" : "N";
+		r210_1080p59_rd_ok->Text = readSpeed >= r210_data_rates[11] ? "Y" : "N";
+		r210_2k23_rd_ok->Text = readSpeed >= r210_data_rates[12] ? "Y" : "N";
+		r210_2k24_rd_ok->Text = readSpeed >= r210_data_rates[13] ? "Y" : "N";
+		r210_2k25_rd_ok->Text = readSpeed >= r210_data_rates[14] ? "Y" : "N";
+
+		r212_pal_rd_ok->Text = readSpeed >= r212_data_rates[0] ? "Y" : "N";
+		r212_ntsc_rd_ok->Text = readSpeed >= r212_data_rates[1] ? "Y" : "N";
+		r212_720p60_rd_ok->Text = readSpeed >= r212_data_rates[2] ? "Y" : "N";
+		r212_720p59_rd_ok->Text = readSpeed >= r212_data_rates[3] ? "Y" : "N";
+		r212_1080p23_rd_ok->Text = readSpeed >= r212_data_rates[4] ? "Y" : "N";
+		r212_1080p24_rd_ok->Text = readSpeed >= r212_data_rates[5] ? "Y" : "N";
+		r212_1080p29_rd_ok->Text = readSpeed >= r212_data_rates[6] ? "Y" : "N";
+		r212_1080p30_rd_ok->Text = readSpeed >= r212_data_rates[7] ? "Y" : "N";
+		r212_1080i50_rd_ok->Text = readSpeed >= r212_data_rates[8] ? "Y" : "N";
+		r212_1080i59_rd_ok->Text = readSpeed >= r212_data_rates[9] ? "Y" : "N";
+		r212_1080p50_rd_ok->Text = readSpeed >= r212_data_rates[10] ? "Y" : "N";
+		r212_1080p59_rd_ok->Text = readSpeed >= r212_data_rates[11] ? "Y" : "N";
+		r212_2k23_rd_ok->Text = readSpeed >= r212_data_rates[12] ? "Y" : "N";
+		r212_2k24_rd_ok->Text = readSpeed >= r212_data_rates[13] ? "Y" : "N";
+		r212_2k25_rd_ok->Text = readSpeed >= r212_data_rates[14] ? "Y" : "N";
+
+		v210_pal_rd_fps->Text = format_fps(readSpeed / v210framesize(720,576));
+		v210_ntsc_rd_fps->Text = format_fps(readSpeed / v210framesize(720,486));
+		v210_720_rd_fps->Text = format_fps(readSpeed / v210framesize(1280,720));
+		v210_1080_rd_fps->Text = format_fps(readSpeed / v210framesize(1920,1080));
+		v210_2k_rd_fps->Text = format_fps(readSpeed / v210framesize(2048,1556));
+
+		r210_pal_rd_fps->Text = format_fps(readSpeed / r210framesize(720,576));
+		r210_ntsc_rd_fps->Text = format_fps(readSpeed / r210framesize(720,486));
+		r210_720_rd_fps->Text = format_fps(readSpeed / r210framesize(1280,720));
+		r210_1080_rd_fps->Text = format_fps(readSpeed / r210framesize(1920,1080));
+		r210_2k_rd_fps->Text = format_fps(readSpeed / r210framesize(2048,1556));
+
+		r212_pal_rd_fps->Text = format_fps(readSpeed / r212framesize(720,576));
+		r212_ntsc_rd_fps->Text = format_fps(readSpeed / r212framesize(720,486));
+		r212_720_rd_fps->Text = format_fps(readSpeed / r212framesize(1280,720));
+		r212_1080_rd_fps->Text = format_fps(readSpeed / r212framesize(1920,1080));
+		r212_2k_rd_fps->Text = format_fps(readSpeed / r212framesize(2048,1556));
+	}
 }
 
 void DiskSpeedTest::MainPage::startTest()

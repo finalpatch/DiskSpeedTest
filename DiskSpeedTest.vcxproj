@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{60720350-4b73-41ca-a0b8-f2f70155355f}</ProjectGuid>
+    <ProjectGuid>{0e9d9a62-2090-474d-b762-f5c2358f22d5}</ProjectGuid>
     <RootNamespace>DiskSpeedTest</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <VCTargetsPath Condition="'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and '$(VisualStudioVersion)' == ''">$(VCTargetsPath11)</VCTargetsPath>
