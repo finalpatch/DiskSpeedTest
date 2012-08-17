@@ -83,6 +83,9 @@ _ReSharper*
 # Installshield output folder
 [Ee]xpress
 
+# Generated files
+[Gg]enerated files
+
 # DocProject is a documentation generator add-in
 DocProject/buildhelp/
 DocProject/Help/*.HxT
